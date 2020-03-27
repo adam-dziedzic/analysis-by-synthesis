@@ -26,7 +26,9 @@ class Encoder(nn.Module):
     def forward(self, x):
         shared = self.shared(x)
         mu = self.conv_mu(shared)
+        # print('mu: ', mu.size())
         logvar = self.conv_logvar(shared)
+        # print('logvar: ', logvar.size())
         return mu, logvar
 
 
@@ -93,3 +95,4 @@ class ABS(nn.Module):
         assert losses.dim() == 2
         logits = -losses.transpose(0, 1)
         return logits, recs, mus, logvars
+

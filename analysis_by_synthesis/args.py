@@ -8,11 +8,14 @@ def get_args():
                         help='same as --initial-evaluation --epochs 0')
 
     # control loading and saving
-    parser.add_argument('--logdir', default=None, type=str,
-                        help='path to the TensorBoard log directory (default: None)')
-    parser.add_argument('--load', default=None, type=str,
+    parser.add_argument('--logdir', default='data/logs', type=str,
+                        help='path to the TensorBoard log directory')
+    parser.add_argument('--load',
+                        # default=None,
+                        default='data/weights/model_abs_ady.pth',
+                        type=str,
                         help='file from which the model should be loaded')
-    parser.add_argument('--save', default=None, type=str,
+    parser.add_argument('--save', default='None', type=str,
                         help='file to which the model should be saved (in addition to logdir)')
 
     # control training
@@ -34,6 +37,7 @@ def get_args():
                         help='how many batches to wait before logging training status')
     parser.add_argument('--epochs-full-evaluation', type=int, default=10, metavar='N',
                         help='how many epochs to wait before a full (expensive) evaluation')
+    parser.add_argument('--delimiter', type=str, default=';', help='delimiter for the log text')
 
     # control dataset
     parser.add_argument('--dataset', default='mnist', type=str,
@@ -59,7 +63,7 @@ def get_args():
     parser.add_argument('--test-batch-size', type=int, default=10000, metavar='N',
                         help='input batch size for testing (default: 10000)')
     parser.add_argument('--num-workers', type=int, default=4, metavar='N',
-                        help='number of workers to load data (default: 4)')
+                        help='number of workers to load data')
 
     args = parser.parse_args()
     return args
