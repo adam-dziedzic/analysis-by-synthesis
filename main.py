@@ -4,9 +4,10 @@ import torch
 from torch import optim
 import torchvision
 from tensorboardX import SummaryWriter
+from pathlib import Path
 
 from analysis_by_synthesis.datasets import get_dataset, get_dataset_loaders
-from analysis_by_synthesis.inference import RobustInference
+from analysis_by_synthesis.inference_robust import RobustInference
 from analysis_by_synthesis.architecture import ABS
 from analysis_by_synthesis.args import get_args
 from analysis_by_synthesis.train import train
@@ -41,7 +42,7 @@ def main():
     model.eval()
 
     # load weights
-    if args.load is not None:
+    if args.test_only and args.load is not None:
         model.load_state_dict(torch.load(args.load))
 
     # create wrappers that perform robust inference
@@ -58,7 +59,9 @@ def main():
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     # create writer for TensorBoard
-    writer = SummaryWriter(args.logdir) if args.logdir is not None else None
+    if args.logdir is not None:
+        Path(args.logdir).mkdir(parents=True, exist_ok=True)
+        writer = SummaryWriter(args.logdir)
 
     # main loop
     for epoch in range(first_epoch, args.epochs + 1):
@@ -89,10 +92,13 @@ def main():
 
     # save the model
     if args.logdir is not None:
+        Path(args.logdir).mkdir(parents=True, exist_ok=True)
         path = join(args.logdir, 'model.pth')
         torch.save(model.state_dict(), path)
         print(f'model saved to {path}')
     if args.save is not None:
+        save_folder = '/'.join(args.save.split('/')[:-1])
+        Path(save_folder).mkdir(parents=True, exist_ok=True)
         torch.save(model.state_dict(), args.save)
         print(f'model saved to {args.save}')
 

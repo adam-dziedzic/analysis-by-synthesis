@@ -17,7 +17,7 @@ class RobustInference(nn.Module):
         self.lr = lr
         self.beta = abs_model.beta
         self.radius = radius
-        self.name = f'{n_samples}_{n_iterations}'
+        self.name = f'robust_{n_samples}_{n_iterations}'
 
         # create a set of random latents that we will reuse
         n_latents = self.vaes[0].n_latents

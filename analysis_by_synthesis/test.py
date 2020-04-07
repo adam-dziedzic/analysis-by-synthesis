@@ -40,7 +40,7 @@ def test(model, args, device, test_loader, step, writer=None, max_batches=None):
     loss /= N
     accuracy = 100 * correct / N
     # print(f'====> Test set: Average loss: {loss:.4f}, Accuracy: {correct}/{N} ({accuracy:.0f}%) {suffix[1:]}\n')
-    data = ['test-' + str(suffix[1:]), accuracy, loss]
+    data = ['test' + str(suffix), accuracy, loss]
     data_str = [str(x) for x in data]
     print(args.delimiter.join(data_str))
 

@@ -8,7 +8,8 @@ from tensorboardX import SummaryWriter
 from analysis_by_synthesis.architecture import ABS
 from analysis_by_synthesis.args import get_args
 from analysis_by_synthesis.datasets import get_dataset, get_dataset_loaders
-from analysis_by_synthesis.inference import RobustInference
+from analysis_by_synthesis.inference_robust import RobustInference
+from analysis_by_synthesis.inference_attack import AttackInference
 from analysis_by_synthesis.sample import sample
 from analysis_by_synthesis.test import test
 
@@ -54,6 +55,9 @@ def main():
     robust_inference2 = RobustInference(model, device, n_samples=8000, n_iterations=0, **kwargs)
     robust_inference3 = RobustInference(model, device, n_samples=8000, n_iterations=50, **kwargs)
 
+    attack_inference1 = AttackInference(abs_model=model, robust_inference=robust_inference1, n_samples=80,
+                                        n_iterations=0)
+
     # create writer for TensorBoard
     writer = SummaryWriter(args.logdir) if args.logdir is not None else None
 
@@ -69,7 +73,12 @@ def main():
     print(args.delimiter.join(header))
     # some evaluations can happen after every epoch because they are cheap
     test(model, *params)
-    # test(robust_inference1, *params)
+
+    print('robust_infernce1: ')
+    test(robust_inference1, *params)
+    print('attack_inference1: ')
+    test(attack_inference1, *params)
+
     # test(robust_inference2, *params)
     # test(robust_inference3, *params)
 
@@ -81,4 +90,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

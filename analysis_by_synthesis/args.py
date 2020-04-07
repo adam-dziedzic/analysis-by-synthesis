@@ -1,5 +1,9 @@
 import argparse
 
+DATA_DIR = 'data/'
+# DATA_DIR = 'data_debug/'
+LOG_DIR = DATA_DIR + 'logs/'
+
 
 def get_args():
     parser = argparse.ArgumentParser(description='Analysis by Synthesis Model')
@@ -8,18 +12,26 @@ def get_args():
                         help='same as --initial-evaluation --epochs 0')
 
     # control loading and saving
-    parser.add_argument('--logdir', default='data/logs', type=str,
+    parser.add_argument('--logdir',
+                        default=LOG_DIR,
+                        type=str,
                         help='path to the TensorBoard log directory')
     parser.add_argument('--load',
                         # default=None,
-                        default='data/weights/model_abs_ady.pth',
+                        default=DATA_DIR + '/weights/model_abs_ady.pth',
                         type=str,
                         help='file from which the model should be loaded')
-    parser.add_argument('--save', default='None', type=str,
+    parser.add_argument('--save',
+                        default=LOG_DIR + 'full_model_abs_ady.pth',
+                        type=str,
                         help='file to which the model should be saved (in addition to logdir)')
 
     # control training
-    parser.add_argument('--epochs', type=int, default=10, metavar='N',
+    parser.add_argument('--epochs',
+                        type=int,
+                        default=10,
+                        # default=1,
+                        metavar='N',
                         help='number of epochs to train (default: 10)')
     parser.add_argument('--batch-size', type=int, default=128, metavar='N',
                         help='input batch size for training (default: 128)')

@@ -8,7 +8,7 @@ from tensorboardX import SummaryWriter
 from analysis_by_synthesis.architecture import ABS
 from analysis_by_synthesis.args import get_args
 from analysis_by_synthesis.datasets import get_dataset, get_dataset_loaders
-from analysis_by_synthesis.inference import RobustInference
+from analysis_by_synthesis.inference_robust import RobustInference
 from analysis_by_synthesis.sample import sample
 from analysis_by_synthesis.test import test
 
