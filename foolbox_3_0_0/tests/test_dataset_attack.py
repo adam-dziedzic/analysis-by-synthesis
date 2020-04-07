@@ -2,7 +2,7 @@ from typing import Tuple
 import pytest
 import eagerpy as ep
 
-import foolbox as fbn
+from foolbox_3_0_0 import foolbox as fbn
 
 
 def test_dataset_attack(
@@ -15,7 +15,7 @@ def test_dataset_attack(
     x = (x - fmodel.bounds.lower) / (fmodel.bounds.upper - fmodel.bounds.lower)
     fmodel = fmodel.transform_bounds((0, 1))
 
-    attack = fbn.attacks.DatasetAttack()
+    attack = foolbox_3_0_0.foolbox.attacks.DatasetAttack()
     attack.feed(fmodel, x)
 
     assert fbn.accuracy(fmodel, x, y) > 0
@@ -27,7 +27,7 @@ def test_dataset_attack(
 
     with pytest.raises(ValueError, match="unknown distance"):
         attack(fmodel, x, y, epsilons=[500.0, 1000.0])
-    attack = fbn.attacks.DatasetAttack(distance=fbn.distances.l2)
+    attack = foolbox_3_0_0.foolbox.attacks.DatasetAttack(distance=foolbox_3_0_0.foolbox.distances.l2)
     attack.feed(fmodel, x)
     advss, _, success = attack(fmodel, x, y, epsilons=[500.0, 1000.0])
     assert success.shape == (2, len(x))

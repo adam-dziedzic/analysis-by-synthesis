@@ -1,14 +1,13 @@
 from typing import Tuple, Any, Dict, Callable, TypeVar
 import numpy as np
 import pytest
-import foolbox as fbn
 import eagerpy as ep
 
 distances = {
-    0: fbn.distances.l0,
-    1: fbn.distances.l1,
-    2: fbn.distances.l2,
-    ep.inf: fbn.distances.linf,
+    0: foolbox_3_0_0.foolbox.distances.l0,
+    1: foolbox_3_0_0.foolbox.distances.l1,
+    2: foolbox_3_0_0.foolbox.distances.l2,
+    ep.inf: foolbox_3_0_0.foolbox.distances.linf,
 }
 
 data: Dict[str, Callable[..., Tuple[ep.Tensor, ep.Tensor]]] = {}

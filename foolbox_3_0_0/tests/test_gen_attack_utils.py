@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 from typing import Any
 
-from foolbox.attacks.gen_attack_utils import rescale_images
+from foolbox_3_0_0.foolbox.attacks.gen_attack_utils import rescale_images
 
 
 def test_rescale_axis(request: Any, dummy: ep.Tensor) -> None:

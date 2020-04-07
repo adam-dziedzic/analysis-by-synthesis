@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import torchvision.models as models
 import eagerpy as ep
-from foolbox import PyTorchModel, accuracy, samples
-import foolbox.attacks as fa
+from foolbox_3_0_0.foolbox import PyTorchModel, accuracy, samples
+import foolbox_3_0_0.foolbox.attacks as fa
 import numpy as np
 
 

@@ -1,6 +1,6 @@
 from typing import Tuple
 import pytest
-import foolbox as fbn
+from foolbox_3_0_0 import foolbox as fbn
 import eagerpy as ep
 
 

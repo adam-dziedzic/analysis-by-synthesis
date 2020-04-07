@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import torchvision.models as models
 import eagerpy as ep
-from foolbox import PyTorchModel, accuracy, samples
-from foolbox.attacks import LinfPGD
+from foolbox_3_0_0.foolbox import PyTorchModel, accuracy, samples
+from foolbox_3_0_0.foolbox.attacks import LinfPGD
 
 
 if __name__ == "__main__":

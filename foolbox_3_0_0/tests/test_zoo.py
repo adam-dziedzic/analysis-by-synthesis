@@ -2,8 +2,8 @@ from typing import Any
 import sys
 import pytest
 
-import foolbox as fbn
-from foolbox.zoo.model_loader import ModelLoader
+from foolbox_3_0_0 import foolbox as fbn
+from foolbox_3_0_0.foolbox.zoo.model_loader import ModelLoader
 
 
 @pytest.fixture(autouse=True)
@@ -39,14 +39,14 @@ def test_loading_model(request: Any, url: str) -> None:
 
     # download model
     try:
-        fmodel = fbn.zoo.get_model(url, name="MobileNetV2", overwrite=True)
-    except fbn.zoo.GitCloneError:
+        fmodel = foolbox_3_0_0.foolbox.zoo.get_model(url, name="MobileNetV2", overwrite=True)
+    except foolbox_3_0_0.foolbox.zoo.GitCloneError:
         pytest.skip()
 
     # download again (test overwriting)
     try:
-        fmodel = fbn.zoo.get_model(url, name="MobileNetV2", overwrite=True)
-    except fbn.zoo.GitCloneError:
+        fmodel = foolbox_3_0_0.foolbox.zoo.get_model(url, name="MobileNetV2", overwrite=True)
+    except foolbox_3_0_0.foolbox.zoo.GitCloneError:
         pytest.skip()
 
     # create a dummy image
@@ -70,8 +70,8 @@ def test_loading_model(request: Any, url: str) -> None:
 # @pytest.mark.parametrize("url, dim", test_data)
 def test_loading_invalid_model(request: Any) -> None:
     url = "https://github.com/jonasrauber/invalid-url"
-    with pytest.raises(fbn.zoo.GitCloneError):
-        fbn.zoo.get_model(url, name="MobileNetV2", overwrite=True)
+    with pytest.raises(foolbox_3_0_0.foolbox.zoo.GitCloneError):
+        foolbox_3_0_0.foolbox.zoo.get_model(url, name="MobileNetV2", overwrite=True)
 
 
 def test_non_default_module_throws_error() -> None:

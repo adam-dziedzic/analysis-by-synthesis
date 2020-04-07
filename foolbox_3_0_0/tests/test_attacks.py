@@ -2,12 +2,12 @@ from typing import List, Tuple, Optional
 import pytest
 import eagerpy as ep
 
-import foolbox as fbn
-import foolbox.attacks as fa
-from foolbox.gradient_estimators import es_gradient_estimator
+from foolbox_3_0_0 import foolbox as fbn
+import foolbox_3_0_0.foolbox.attacks as fa
+from foolbox_3_0_0.foolbox.gradient_estimators import es_gradient_estimator
 
-L2 = fbn.types.L2
-Linf = fbn.types.Linf
+L2 = foolbox_3_0_0.foolbox.types.L2
+Linf = foolbox_3_0_0.foolbox.types.Linf
 
 
 FGSM_GE = es_gradient_estimator(
@@ -24,7 +24,7 @@ attacks: List[Tuple[fbn.Attack, Optional[float], bool, bool]] = [
     (fa.DDNAttack(init_epsilon=2.0), None, True, False),
     (fa.InversionAttack(), None, False, False),
     (
-        fa.InversionAttack(distance=fbn.distances.l2).repeat(3).repeat(2),
+        fa.InversionAttack(distance=foolbox_3_0_0.foolbox.distances.l2).repeat(3).repeat(2),
         None,
         False,
         False,

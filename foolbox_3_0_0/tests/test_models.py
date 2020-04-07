@@ -4,7 +4,7 @@ import eagerpy as ep
 import numpy as np
 import copy
 
-import foolbox as fbn
+from foolbox_3_0_0 import foolbox as fbn
 
 ModelAndData = Tuple[fbn.Model, ep.Tensor, ep.Tensor]
 
@@ -77,7 +77,7 @@ def test_pytorch_invalid_model(request: Any) -> None:
 
 @pytest.mark.parametrize("bounds", [(0, 1), (-1.0, 1.0), (0, 255), (-32768, 32767)])
 def test_transform_bounds(
-    fmodel_and_data: ModelAndData, bounds: fbn.types.BoundsInput
+    fmodel_and_data: ModelAndData, bounds: foolbox_3_0_0.foolbox.types.BoundsInput
 ) -> None:
     fmodel1, x, y = fmodel_and_data
     logits1 = fmodel1(x)
@@ -101,12 +101,12 @@ def test_transform_bounds(
 
 @pytest.mark.parametrize("bounds", [(0, 1), (-1.0, 1.0), (0, 255), (-32768, 32767)])
 def test_transform_bounds_inplace(
-    fmodel_and_data: ModelAndData, bounds: fbn.types.BoundsInput
+    fmodel_and_data: ModelAndData, bounds: foolbox_3_0_0.foolbox.types.BoundsInput
 ) -> None:
     fmodel, x, y = fmodel_and_data
     fmodel = copy.copy(fmodel)  # to avoid interference with other tests
 
-    if not isinstance(fmodel, fbn.models.base.ModelWithPreprocessing):
+    if not isinstance(fmodel, foolbox_3_0_0.foolbox.models.base.ModelWithPreprocessing):
         pytest.skip()
         assert False
     logits1 = fmodel(x)
@@ -123,7 +123,7 @@ def test_transform_bounds_inplace(
 @pytest.mark.parametrize("bounds", [(0, 1), (-1.0, 1.0), (0, 255), (-32768, 32767)])
 @pytest.mark.parametrize("manual", [True, False])
 def test_transform_bounds_wrapper(
-    fmodel_and_data: ModelAndData, bounds: fbn.types.BoundsInput, manual: bool
+    fmodel_and_data: ModelAndData, bounds: foolbox_3_0_0.foolbox.types.BoundsInput, manual: bool
 ) -> None:
     fmodel1, x, y = fmodel_and_data
     fmodel1 = copy.copy(fmodel1)  # to avoid interference with other tests
@@ -133,15 +133,15 @@ def test_transform_bounds_wrapper(
 
     fmodel2: fbn.Model
     if manual:
-        fmodel2 = fbn.models.TransformBoundsWrapper(fmodel1, bounds)
+        fmodel2 = foolbox_3_0_0.foolbox.models.TransformBoundsWrapper(fmodel1, bounds)
     else:
-        if not isinstance(fmodel1, fbn.models.base.ModelWithPreprocessing):
+        if not isinstance(fmodel1, foolbox_3_0_0.foolbox.models.base.ModelWithPreprocessing):
             pytest.skip()
             assert False
         fmodel2 = fmodel1.transform_bounds(bounds, wrapper=True)
         with pytest.raises(ValueError, match="cannot both be True"):
             fmodel1.transform_bounds(bounds, inplace=True, wrapper=True)
-    assert isinstance(fmodel2, fbn.models.TransformBoundsWrapper)
+    assert isinstance(fmodel2, foolbox_3_0_0.foolbox.models.TransformBoundsWrapper)
     min2, max2 = fmodel2.bounds
     x2 = (x - min1) / (max1 - min1) * (max2 - min2) + min2
     logits2 = fmodel2(x2)
@@ -167,54 +167,54 @@ def test_transform_bounds_wrapper(
 
 def test_preprocessing(fmodel_and_data: ModelAndData) -> None:
     fmodel, x, y = fmodel_and_data
-    if not isinstance(fmodel, fbn.models.base.ModelWithPreprocessing):
+    if not isinstance(fmodel, foolbox_3_0_0.foolbox.models.base.ModelWithPreprocessing):
         pytest.skip()
         assert False
 
     preprocessing = dict(mean=[3, 3, 3], std=[5, 5, 5], axis=-3)
-    fmodel = fbn.models.base.ModelWithPreprocessing(
+    fmodel = foolbox_3_0_0.foolbox.models.base.ModelWithPreprocessing(
         fmodel._model, fmodel.bounds, fmodel.dummy, preprocessing
     )
 
     preprocessing = dict(mean=[3, 3, 3], axis=-3)
-    fmodel = fbn.models.base.ModelWithPreprocessing(
+    fmodel = foolbox_3_0_0.foolbox.models.base.ModelWithPreprocessing(
         fmodel._model, fmodel.bounds, fmodel.dummy, preprocessing
     )
 
     preprocessing = dict(mean=np.array([3, 3, 3]), axis=-3)
-    fmodel = fbn.models.base.ModelWithPreprocessing(
+    fmodel = foolbox_3_0_0.foolbox.models.base.ModelWithPreprocessing(
         fmodel._model, fmodel.bounds, fmodel.dummy, preprocessing
     )
 
     # std -> foo
     preprocessing = dict(mean=[3, 3, 3], foo=[5, 5, 5], axis=-3)
     with pytest.raises(ValueError):
-        fmodel = fbn.models.base.ModelWithPreprocessing(
+        fmodel = foolbox_3_0_0.foolbox.models.base.ModelWithPreprocessing(
             fmodel._model, fmodel.bounds, fmodel.dummy, preprocessing
         )
 
     # axis positive
     preprocessing = dict(mean=[3, 3, 3], std=[5, 5, 5], axis=1)
     with pytest.raises(ValueError):
-        fmodel = fbn.models.base.ModelWithPreprocessing(
+        fmodel = foolbox_3_0_0.foolbox.models.base.ModelWithPreprocessing(
             fmodel._model, fmodel.bounds, fmodel.dummy, preprocessing
         )
 
     preprocessing = dict(mean=3, std=5)
-    fmodel = fbn.models.base.ModelWithPreprocessing(
+    fmodel = foolbox_3_0_0.foolbox.models.base.ModelWithPreprocessing(
         fmodel._model, fmodel.bounds, fmodel.dummy, preprocessing
     )
 
     # axis with 1D mean
     preprocessing = dict(mean=3, std=[5, 5, 5], axis=-3)
     with pytest.raises(ValueError):
-        fmodel = fbn.models.base.ModelWithPreprocessing(
+        fmodel = foolbox_3_0_0.foolbox.models.base.ModelWithPreprocessing(
             fmodel._model, fmodel.bounds, fmodel.dummy, preprocessing
         )
 
     # axis with 1D std
     preprocessing = dict(mean=[3, 3, 3], std=5, axis=-3)
     with pytest.raises(ValueError):
-        fmodel = fbn.models.base.ModelWithPreprocessing(
+        fmodel = foolbox_3_0_0.foolbox.models.base.ModelWithPreprocessing(
             fmodel._model, fmodel.bounds, fmodel.dummy, preprocessing
         )

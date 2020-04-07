@@ -2,8 +2,8 @@
 import torch
 import torch.nn as nn
 import os
-from foolbox.models import PyTorchModel
-from foolbox.utils import accuracy, samples
+from foolbox_3_0_0.foolbox.models import PyTorchModel
+from foolbox_3_0_0.foolbox.utils import accuracy, samples
 
 
 def create() -> PyTorchModel:

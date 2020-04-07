@@ -20,7 +20,7 @@ def fetch_weights(weights_uri: str, unzip: bool = False) -> str:
 
     Download and unzip weights:
 
-    >>> from foolbox import zoo
+    >>> from foolbox_3_0_0.foolbox import zoo
     >>> url = 'https://github.com/MadryLab/mnist_challenge_models/raw/master/secret.zip'  # noqa F501
     >>> weights_path = zoo.fetch_weights(url, unzip=True)
 

@@ -3,8 +3,7 @@ import functools
 import pytest
 import eagerpy as ep
 
-import foolbox
-import foolbox as fbn
+from foolbox_3_0_0 import foolbox as fbn
 
 ModelAndData = Tuple[fbn.Model, ep.Tensor, ep.Tensor]
 
@@ -48,7 +47,7 @@ def register(
 
 
 def pytorch_simple_model(
-    device: Any = None, preprocessing: fbn.types.Preprocessing = None
+    device: Any = None, preprocessing: foolbox_3_0_0.foolbox.types.Preprocessing = None
 ) -> ModelAndData:
     import torch
 
@@ -110,7 +109,7 @@ def pytorch_simple_model_object(request: Any) -> ModelAndData:
 
 @register("pytorch", real=True)
 def pytorch_mnist(request: Any) -> ModelAndData:
-    fmodel = fbn.zoo.ModelLoader.get().load(
+    fmodel = foolbox_3_0_0.foolbox.zoo.ModelLoader.get().load(
         "examples/zoo/mnist/", module_name="foolbox_model"
     )
     x, y = fbn.samples(fmodel, dataset="mnist", batchsize=16)
@@ -137,7 +136,7 @@ def pytorch_resnet18(request: Any) -> ModelAndData:
 
 
 def tensorflow_simple_sequential(
-    device: Optional[str] = None, preprocessing: fbn.types.Preprocessing = None
+    device: Optional[str] = None, preprocessing: foolbox_3_0_0.foolbox.types.Preprocessing = None
 ) -> ModelAndData:
     import tensorflow as tf
 

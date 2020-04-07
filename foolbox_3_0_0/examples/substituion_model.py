@@ -2,9 +2,9 @@
 # mypy: no-disallow-untyped-defs
 import torchvision.models as models
 import eagerpy as ep
-from foolbox import PyTorchModel, accuracy, samples
-from foolbox.attacks import LinfPGD
-from foolbox.attacks.base import get_criterion
+from foolbox_3_0_0.foolbox import PyTorchModel, accuracy, samples
+from foolbox_3_0_0.foolbox.attacks import LinfPGD
+from foolbox_3_0_0.foolbox.attacks import get_criterion
 
 
 if __name__ == "__main__":

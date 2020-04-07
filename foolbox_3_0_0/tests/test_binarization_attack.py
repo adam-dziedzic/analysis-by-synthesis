@@ -2,11 +2,11 @@ from typing import Tuple
 import pytest
 import eagerpy as ep
 
-from foolbox import accuracy, Model
-from foolbox.models import ThresholdingWrapper
-from foolbox.devutils import flatten
-from foolbox.attacks import BinarySearchContrastReductionAttack
-from foolbox.attacks import BinarizationRefinementAttack
+from foolbox_3_0_0.foolbox import accuracy, Model
+from foolbox_3_0_0.foolbox.models import ThresholdingWrapper
+from foolbox_3_0_0.foolbox.devutils import flatten
+from foolbox_3_0_0.foolbox.attacks import BinarySearchContrastReductionAttack
+from foolbox_3_0_0.foolbox.attacks import BinarizationRefinementAttack
 
 
 def test_binarization_attack(

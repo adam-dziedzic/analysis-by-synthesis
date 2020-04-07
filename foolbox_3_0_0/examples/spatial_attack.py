@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import torchvision.models as models
 import eagerpy as ep
-from foolbox import PyTorchModel, accuracy, samples
-import foolbox.attacks as fa
+from foolbox_3_0_0.foolbox import PyTorchModel, accuracy, samples
 import numpy as np
 
 
@@ -22,7 +21,7 @@ if __name__ == "__main__":
 
     # attacktrys a combination of specified rotations and translations to an image
     # stops early if adversarial shifts and translations for all images are found
-    attack = fa.spatial_attack.SpatialAttack(
+    attack = foolbox_3_0_0.foolbox.attacks.spatial_attack.SpatialAttack(
         max_translation=6,  # 6px so x in [x-6, x+6] and y in [y-6, y+6]
         num_translations=6,  # number of translations in x, y.
         max_rotation=20,  # +- rotation in degrees

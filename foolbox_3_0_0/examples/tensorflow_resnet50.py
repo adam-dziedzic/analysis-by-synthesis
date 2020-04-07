@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import tensorflow as tf
 import eagerpy as ep
-from foolbox import TensorFlowModel, accuracy, samples
-from foolbox.attacks import LinfPGD
+from foolbox_3_0_0.foolbox import TensorFlowModel, accuracy, samples
+from foolbox_3_0_0.foolbox.attacks import LinfPGD
 
 
 if __name__ == "__main__":

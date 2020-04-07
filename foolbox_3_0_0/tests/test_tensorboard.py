@@ -2,7 +2,6 @@ from typing import Union, Any
 from typing_extensions import Literal
 import pytest
 import eagerpy as ep
-import foolbox as fbn
 
 
 @pytest.mark.parametrize("logdir", [False, "temp"])
@@ -15,7 +14,7 @@ def test_tensorboard(
     if logdir:
         before = len(list(tmp_path.iterdir()))
 
-    tb = fbn.tensorboard.TensorBoard(logdir)
+    tb = foolbox_3_0_0.foolbox.tensorboard.TensorBoard(logdir)
 
     tb.scalar("a_scalar", 5, step=1)
 

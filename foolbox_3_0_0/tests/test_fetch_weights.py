@@ -1,6 +1,6 @@
-from foolbox.zoo import fetch_weights
-from foolbox.zoo.common import home_directory_path, sha256_hash
-from foolbox.zoo.weights_fetcher import FOLDER
+from foolbox_3_0_0.foolbox.zoo import fetch_weights
+from foolbox_3_0_0.foolbox.zoo import home_directory_path, sha256_hash
+from foolbox_3_0_0.foolbox.zoo.weights_fetcher import FOLDER
 
 import os
 import pytest

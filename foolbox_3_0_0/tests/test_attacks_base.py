@@ -1,14 +1,13 @@
 from typing import Tuple
 import pytest
 import eagerpy as ep
-import foolbox as fbn
-
+from foolbox_3_0_0 import foolbox as fbn
 
 attacks = [
-    fbn.attacks.InversionAttack(distance=fbn.distances.l2),
-    fbn.attacks.InversionAttack(distance=fbn.distances.l2).repeat(3),
-    fbn.attacks.L2ContrastReductionAttack(),
-    fbn.attacks.L2ContrastReductionAttack().repeat(3),
+    foolbox_3_0_0.foolbox.attacks.InversionAttack(distance=foolbox_3_0_0.foolbox.distances.l2),
+    foolbox_3_0_0.foolbox.attacks.InversionAttack(distance=foolbox_3_0_0.foolbox.distances.l2).repeat(3),
+    foolbox_3_0_0.foolbox.attacks.L2ContrastReductionAttack(),
+    foolbox_3_0_0.foolbox.attacks.L2ContrastReductionAttack().repeat(3),
 ]
 
 
@@ -39,9 +38,9 @@ def test_get_channel_axis() -> None:
 
     model = Model()
     model.data_format = "channels_first"  # type: ignore
-    assert fbn.attacks.base.get_channel_axis(model, 3) == 1  # type: ignore
+    assert foolbox_3_0_0.foolbox.attacks.base.get_channel_axis(model, 3) == 1  # type: ignore
     model.data_format = "channels_last"  # type: ignore
-    assert fbn.attacks.base.get_channel_axis(model, 3) == 2  # type: ignore
+    assert foolbox_3_0_0.foolbox.attacks.base.get_channel_axis(model, 3) == 2  # type: ignore
     model.data_format = "invalid"  # type: ignore
     with pytest.raises(ValueError):
-        assert fbn.attacks.base.get_channel_axis(model, 3)  # type: ignore
+        assert foolbox_3_0_0.foolbox.attacks.base.get_channel_axis(model, 3)  # type: ignore

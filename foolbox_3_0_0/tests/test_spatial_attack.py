@@ -1,8 +1,8 @@
 from typing import List, Tuple
 import pytest
 import eagerpy as ep
-import foolbox as fbn
-import foolbox.attacks as fa
+from foolbox_3_0_0 import foolbox as fbn
+import foolbox_3_0_0.foolbox.attacks as fa
 
 
 def get_attack_id(x: fbn.Attack) -> str:

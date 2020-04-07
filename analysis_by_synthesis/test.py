@@ -1,4 +1,3 @@
-import tqdm
 import torch
 from torchvision.utils import make_grid
 

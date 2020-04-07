@@ -1,5 +1,5 @@
 from typing import Tuple
-import foolbox as fbn
+from foolbox_3_0_0 import foolbox as fbn
 import eagerpy as ep
 import pytest
 

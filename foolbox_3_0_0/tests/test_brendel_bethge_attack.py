@@ -1,10 +1,10 @@
 from typing import Tuple, Union, List, Any
 import eagerpy as ep
 
-import foolbox as fbn
-import foolbox.attacks as fa
-from foolbox.devutils import flatten
-from foolbox.attacks.brendel_bethge import BrendelBethgeAttack
+from foolbox_3_0_0 import foolbox as fbn
+import foolbox_3_0_0.foolbox.attacks as fa
+from foolbox_3_0_0.foolbox.devutils import flatten
+from foolbox_3_0_0.foolbox.attacks import BrendelBethgeAttack
 import pytest
 
 

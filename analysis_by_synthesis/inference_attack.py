@@ -1,8 +1,18 @@
-import numpy as np
 import torch
-from torch import nn, optim
+from torch import nn
+from foolbox_3_0_0 import foolbox
 
-from .loss_functions import samplewise_loss_function
+
+class ABSLogits(nn.Module):
+    """ABS model wrapper that only returns the logits."""
+
+    def __init__(self, abs_model):
+        super().__init__()
+        self.abs_model = abs_model
+
+    def forward(self, x):
+        logits, recs, mus, logvars = self.abs_model.forward(x)
+        return logits
 
 
 class AttackInference(nn.Module):
@@ -11,35 +21,31 @@ class AttackInference(nn.Module):
 
     def __init__(self, abs_model, robust_inference, n_samples=None, n_iterations=None):
         super().__init__()
-
         self.abs = abs_model
+        self.abs_logits = ABSLogits(abs_model=abs_model)
+        self.abs_logits.eval()
+        self.fmodel = foolbox.models.pytorch.PyTorchModel(self.abs_logits, bounds=(0, 1), preprocessing=None)
         self.vaes = abs_model.vaes
         self.robust_inference = robust_inference
         self.name = f'attack_{n_samples}_{n_iterations}'
         self.beta = abs_model.beta
 
-    def attack(self, x):
-        outputs = [vae(x) for vae in self.vaes]
-        recs, mus, logvars = zip(*outputs)
-        recs, mus, logvars = torch.stack(recs), torch.stack(mus), torch.stack(logvars)
-        losses = [samplewise_loss_function(x, *output, self.beta) for output in outputs]
-        losses = torch.stack(losses)
-        assert losses.dim() == 2
-        logits = -losses.transpose(0, 1)
-        print("logits: ", logits)
-        print('logits size: ', logits.size())
-        # return logits, recs, mus, logvars
-        return x
-        #
-        #
-        # losses = []
-        # recs = []
-        # mus = []
-        # for vae in self.vaes:
-        #     return adv
+    def test_clean(self):
+        # get data and test the model
+        batchsize = 20
+        dataset = 'mnist'
+        images, labels = foolbox.samples(self.fmodel, dataset=dataset, batchsize=batchsize)
+        print('clean accuracy: ', foolbox.accuracy(self.fmodel, images, labels))
+
+    def attack(self, x, labels=None, attack='pgd'):
+        if labels is None:
+            labels = self.abs_model(x)
+        # apply the attack
+        if attack == 'pgd':
+            attack = foolbox.attacks.LinfPGD()
 
     def forward(self, x):
-        """This performs attack on the robust inference. We find the adversarial examples
+        """This performs an attack on the robust inference. We find the adversarial examples
         by decreasing the confidence for the VAE for the correct class and increasing the
         confidence of the 2nd best class (which is for an incorrect class). We leverage
         directly the encoder network."""
@@ -48,3 +54,34 @@ class AttackInference(nn.Module):
             adv = self.attack(x)
             return self.robust_inference(adv)
 
+
+if __name__ == "__main__":
+    import os
+
+    print('current working directory: ', os.getcwd())
+    # create the ABS model
+    from analysis_by_synthesis.architecture import ABS
+    from analysis_by_synthesis.args import get_args
+
+    args = get_args()
+
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    model = ABS(n_classes=10, n_latents_per_class=8, beta=args.beta).to(device)
+    model.eval()
+    model.load_state_dict(torch.load("../" + args.load))
+
+    from analysis_by_synthesis.inference_robust import RobustInference
+
+    # create wrappers that perform robust inference
+    kwargs = {
+        'fraction_to_dismiss': args.fraction_to_dismiss,
+        'lr': args.inference_lr,
+        'radius': args.clip_to_sphere,
+    }
+    n_samples = 80
+    n_iterations = 0
+    robust_inference1 = RobustInference(model, device, n_samples=n_samples, n_iterations=n_iterations, **kwargs)
+    attack_inference1 = AttackInference(abs_model=model, robust_inference=robust_inference1, n_samples=n_samples,
+                                        n_iterations=n_iterations)
+
+    attack_inference1.test_clean()
