@@ -5,6 +5,13 @@ DATA_DIR = 'data/'
 LOG_DIR = DATA_DIR + 'logs/'
 
 
+def print_args(args):
+    print('args: ')
+    keys = [a for a in dir(args) if not a.startswith('__')]
+    for key in sorted(keys):
+        print(str(key) + ": " + str(getattr(args, key)))
+
+
 def get_args():
     parser = argparse.ArgumentParser(description='Analysis by Synthesis Model')
 
@@ -18,7 +25,8 @@ def get_args():
                         help='path to the TensorBoard log directory')
     parser.add_argument('--load',
                         # default=None,
-                        default=DATA_DIR + '/weights/model_abs_ady.pth',
+                        # default=DATA_DIR + '/weights/model_abs_ady.pth',
+                        default=DATA_DIR + '/weights/mnist_abs_original.pth',
                         type=str,
                         help='file from which the model should be loaded')
     parser.add_argument('--save',
@@ -72,10 +80,14 @@ def get_args():
     # control performance
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
-    parser.add_argument('--test-batch-size', type=int, default=10000, metavar='N',
-                        help='input batch size for testing (default: 10000)')
+    parser.add_argument('--test-batch-size', type=int, default=5000, metavar='N',
+                        help='input batch size for testing')
     parser.add_argument('--num-workers', type=int, default=4, metavar='N',
                         help='number of workers to load data')
+
+    # control attack
+    parser.add_argument('--attack-steps', type=int, default=100, metavar='N',
+                        help='number of steps (iterations) in the attack')
 
     args = parser.parse_args()
     return args

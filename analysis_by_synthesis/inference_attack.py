@@ -19,7 +19,8 @@ class AttackInference(nn.Module):
     """Takes a trained ABS model and robust inference and replaces its variational inference
     with robust inference."""
 
-    def __init__(self, abs_model, robust_inference, n_samples=None, n_iterations=None):
+    def __init__(self, abs_model, robust_inference, n_samples=None, n_iterations=None, attack_name='pgd',
+                 attack_steps=100):
         super().__init__()
         self.abs = abs_model
         self.abs_logits = ABSLogits(abs_model=abs_model)
@@ -29,6 +30,8 @@ class AttackInference(nn.Module):
         self.robust_inference = robust_inference
         self.name = f'attack_{n_samples}_{n_iterations}'
         self.beta = abs_model.beta
+        self.attack_name = attack_name
+        self.attack_steps = attack_steps
 
     def test_clean(self):
         # get data and test the model
@@ -37,12 +40,17 @@ class AttackInference(nn.Module):
         images, labels = foolbox.samples(self.fmodel, dataset=dataset, batchsize=batchsize)
         print('clean accuracy: ', foolbox.accuracy(self.fmodel, images, labels))
 
-    def attack(self, x, labels=None, attack='pgd'):
+    def attack(self, x, labels=None):
         if labels is None:
             labels = self.abs_model(x)
         # apply the attack
-        if attack == 'pgd':
-            attack = foolbox.attacks.LinfPGD()
+        if self.attack_name == 'pgd':
+            attack = foolbox.attacks.LinfPGD(steps=self.attack_steps)
+            # epsilons = [0.0, 0.001, 0.01, 0.03, 0.1, 0.3, 0.5, 1.0]
+            epsilons = [0.3]
+            advs, _, success = attack(self.fmodel, inputs=self.images, criterion=labels, epsilons=epsilons)
+            advs = advs[0]
+            return advs
 
     def forward(self, x):
         """This performs an attack on the robust inference. We find the adversarial examples

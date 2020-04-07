@@ -12,6 +12,7 @@ from analysis_by_synthesis.inference_robust import RobustInference
 from analysis_by_synthesis.inference_attack import AttackInference
 from analysis_by_synthesis.sample import sample
 from analysis_by_synthesis.test import test
+from analysis_by_synthesis.test_attack import test_attack
 
 
 def main():
@@ -74,13 +75,13 @@ def main():
     # some evaluations can happen after every epoch because they are cheap
     test(model, *params)
 
-    print('robust_infernce1: ')
-    test(robust_inference1, *params)
-    print('attack_inference1: ')
-    test(attack_inference1, *params)
-
-    # test(robust_inference2, *params)
-    # test(robust_inference3, *params)
+    for nr, robust_inference in [(1, robust_inference1),
+                                 (2, robust_inference2),
+                                 (3, robust_inference3)]:
+        print(f'robust_infernce{nr}: ')
+        test(robust_inference, *params)
+        print(f'attack_inference{nr}: ')
+        test_attack(robust_inference, *params)
 
     sample(model, device, step, writer)
 

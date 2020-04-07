@@ -1,15 +1,18 @@
 import logging
+import time
 import unittest
 
 import torch
 
-from analysis_by_synthesis.inference_robust import RobustInference
 from analysis_by_synthesis.architecture import ABS
-from analysis_by_synthesis.inference_attack import ABSLogits
 from analysis_by_synthesis.args import get_args
+from analysis_by_synthesis.args import print_args
+from analysis_by_synthesis.datasets import get_dataset, get_dataset_loaders
+from analysis_by_synthesis.inference_attack import ABSLogits
+from analysis_by_synthesis.inference_robust import RobustInference
+from analysis_by_synthesis.utils import count_correct
 from analysis_by_synthesis.utils.logging_utils import get_logger
 from analysis_by_synthesis.utils.logging_utils import set_up_logging
-from analysis_by_synthesis.utils import count_correct
 from foolbox_3_0_0 import foolbox
 
 ERR_MSG = "Expected x is different from computed y."
@@ -118,6 +121,62 @@ class TestInferenceAttack(unittest.TestCase):
                 robust_accuracy = self.get_robust_accuracy(robust_inference=robust_inference,
                                                            data=adv_data, labels=self.labels)
                 print(f'robust_inference{nr} accuracy: {robust_accuracy}')
+
+    def attack_mnist(self, robust_inference=None, nr=None, epsilon=0.3):
+        # load the train and test set
+        args = self.args
+        print_args(args=args)
+        use_cuda = True
+        train_set, test_set = get_dataset(args.dataset, args.no_augmentation)
+        train_loader, test_loader = get_dataset_loaders(train_set, test_set, use_cuda, args)
+
+        if robust_inference is None:
+            robust_inference = self.robust_inference1
+            nr = 1
+        print(f'robust_inference{nr} in attack_mnist (all data samples), PGD attack steps {args.attack_steps}:')
+
+        attack = foolbox.attacks.LinfPGD(steps=args.attack_steps)
+
+        epsilons = [epsilon]
+
+        correct = 0
+        correct_adv = 0
+        counter = 0
+
+        for i, (data, targets) in enumerate(test_loader):
+            print('batch number: ', i)
+            data = data.to(self.device)
+            targets = targets.to(self.device)
+
+            counter += len(targets)
+
+            logits, recs, mus, logvars = robust_inference(data)
+            correct += count_correct(predictions=logits, labels=targets)
+
+            advs, _, _ = attack(self.fmodel, inputs=data, criterion=targets, epsilons=epsilons)
+            advs = advs[0] # we only have 1 epsilon value
+
+            logits, recs, mus, logvars = robust_inference(advs)
+            correct_adv += count_correct(predictions=logits, labels=targets)
+
+        accuracy = correct / counter
+        print('accuracy mnist on clean data: ', accuracy)
+
+        accuracy_adv = correct_adv / counter
+        print('accuracy mnist on adv data: ', accuracy_adv)
+
+    def test_attack_mnist_many_robust_inference_tests(self):
+        epsilons = [0.0, 0.001, 0.01, 0.03, 0.1, 0.3, 0.34, 0.4, 0.5, 1.0]
+        for epsilon in epsilons:
+            for nr, robust_inference in [
+                # (1, self.robust_inference1),
+                # (2, self.robust_inference2),
+                (3, self.robust_inference3),
+            ]:
+                start = time.time()
+                self.attack_mnist(robust_inference=robust_inference, nr=nr, epsilon=epsilon)
+                stop = time.time()
+                print('Elapsed time (sec): ', stop - start)
 
 
 if __name__ == '__main__':
