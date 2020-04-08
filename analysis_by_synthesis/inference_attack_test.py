@@ -52,19 +52,23 @@ class TestInferenceAttack(unittest.TestCase):
             'lr': self.args.inference_lr,
             'radius': self.args.clip_to_sphere,
         }
+        self.abs_defense = ABS(n_classes=10, n_latents_per_class=8, beta=self.args.beta).to(self.device)
+        self.abs_defense.eval()
+        self.abs_defense.load_state_dict(torch.load("../" + self.args.load))
         n_samples = 80
         n_iterations = 0
-        self.robust_inference1 = RobustInference(self.abs, self.device, n_samples=n_samples,
+        self.robust_inference1 = RobustInference(self.abs_defense, self.device, n_samples=n_samples,
                                                  n_iterations=n_iterations, **kwargs)
-        self.robust_inference2 = RobustInference(self.abs, self.device, n_samples=8000,
+        self.robust_inference2 = RobustInference(self.abs_defense, self.device, n_samples=8000,
                                                  n_iterations=0, **kwargs)
-        self.robust_inference3 = RobustInference(self.abs, self.device, n_samples=8000,
+        self.robust_inference3 = RobustInference(self.abs_defense, self.device, n_samples=8000,
                                                  n_iterations=50, **kwargs)
 
     def init_abs(self):
         self.abs = ABS(n_classes=10, n_latents_per_class=8, beta=self.args.beta).to(self.device)
         self.abs.eval()
-        self.abs.load_state_dict(torch.load("../" + self.args.load))
+        # self.abs.load_state_dict(torch.load("../" + self.args.load))
+        self.abs.load_state_dict(torch.load("../data/weights/model_abs_ady.pth"))
         self.abs_logits = ABSLogits(abs_model=self.abs)
         self.abs_logits.eval()
         self.fmodel = foolbox.PyTorchModel(self.abs_logits, bounds=(0, 1), preprocessing=None)
@@ -166,7 +170,8 @@ class TestInferenceAttack(unittest.TestCase):
         print('accuracy mnist on adv data: ', accuracy_adv)
 
     def test_attack_mnist_many_robust_inference_tests(self):
-        epsilons = [0.0, 0.001, 0.01, 0.03, 0.1, 0.3, 0.34, 0.4, 0.5, 1.0]
+        # epsilons = [0.0, 0.001, 0.01, 0.03, 0.1, 0.3, 0.34, 0.4, 0.5, 1.0]
+        epsilons = [0.3]
         for epsilon in epsilons:
             for nr, robust_inference in [
                 # (1, self.robust_inference1),
